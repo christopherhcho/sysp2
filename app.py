@@ -61,4 +61,4 @@ def submit():
 
 # 애플리케이션을 실행할 때, Flask 서버를 시작 (디버그 모드에서 8070 포트로 실행)
 if __name__ == '__main__':
-    app.run(debug=True, port=8070)
+    app.run(debug=True, host='0.0.0.0', port=8070)
