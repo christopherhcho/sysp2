@@ -36,7 +36,7 @@ def submit():
             {"role": "system", "content": "You are a helpful assistant."},  # 시스템 메시지, AI에게 역할 지시
             {"role": "user", "content": input_text}  # 사용자가 입력한 텍스트 전달
         ],
-        "max_tokens": 100,  # 생성할 응답의 최대 토큰 수
+        
         "temperature": 0.7  # 응답의 창의성 정도 (0에 가까울수록 덜 창의적, 1에 가까울수록 더 창의적)
     }
 
