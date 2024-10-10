@@ -74,10 +74,17 @@
         }
         .result {
             margin-top: 20px;
-            padding: 10px;
+        }
+        .result div {
             background-color: #f9f9f9;
-            border-radius: 5px;
+            color: #333;
             border: 1px solid #ccc;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f; /* 변경된 부분을 빨간색으로 강조 */
         }
     </style>
 </head>
@@ -87,27 +94,29 @@
 
         <!-- 탭 -->
         <div class="tabs">
-            <div class="tab active" data-tab="event">행사 EDM</div>
-            <div class="tab" data-tab="promotion">프로모션 EDM</div>
-            <div class="tab" data-tab="landing">랜딩페이지</div>
+            <div class="tab active" data-tab="event_edm">행사 EDM</div>
+            <div class="tab" data-tab="promotion_edm">프로모션 EDM</div>
+            <div class="tab" data-tab="landing_page">랜딩페이지</div>
         </div>
 
         <!-- 탭 콘텐츠 -->
-        <div id="event" class="tab-content active">
+        <div id="event_edm" class="tab-content active">
             <h2>행사 EDM 입력 항목</h2>
-            <textarea id="inputText-event" placeholder="행사 EDM에 대한 내용을 입력하세요"></textarea>
+            <textarea id="inputText-event_edm" placeholder="행사 EDM에 대한 내용을 입력하세요"></textarea>
         </div>
-        <div id="promotion" class="tab-content">
+        <div id="promotion_edm" class="tab-content">
             <h2>프로모션 EDM 입력 항목</h2>
-            <textarea id="inputText-promotion" placeholder="프로모션 EDM에 대한 내용을 입력하세요"></textarea>
+            <textarea id="inputText-promotion_edm" placeholder="프로모션 EDM에 대한 내용을 입력하세요"></textarea>
         </div>
-        <div id="landing" class="tab-content">
+        <div id="landing_page" class="tab-content">
             <h2>랜딩페이지 입력 항목</h2>
-            <textarea id="inputText-landing" placeholder="랜딩페이지에 대한 내용을 입력하세요"></textarea>
+            <textarea id="inputText-landing_page" placeholder="랜딩페이지에 대한 내용을 입력하세요"></textarea>
         </div>
 
         <button onclick="submitForm()">검토 요청</button>
         <div class="loading-message" id="loadingMessage" style="display: none;">로딩 중...</div>
+
+        <!-- 결과 영역 -->
         <div class="result" id="result"></div>
     </div>
 
@@ -118,9 +127,24 @@
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
                 this.classList.add('active');
-                document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+                const activeTab = this.getAttribute('data-tab');
+                document.getElementById(activeTab).classList.add('active');
+                // 탭 전환 시 기본 텍스트 설정
+                document.getElementById('inputText-' + activeTab).value = defaultTexts[activeTab];
             });
         });
+
+        // 기본 텍스트 설정
+        const defaultTexts = {
+            event_edm: "[고객님의 회사명], 인사/채용 관리를 간소화하세요 – 지금 가입하고 [특별 혜택]을 받으세요!\n[헤더]\n[회사 로고]\n안녕하세요, [고객님 이름]님!\n[고객님의 회사명]의 HR/채용 관리를 한층 더 간편하게 만들어줄 솔루션, 지금 바로 경험해 보세요! 회원가입만 하셔도 아래 혜택을 누리실 수 있습니다.\n[혜택 안내]\n\n할인 혜택: 자사 솔루션 1년 이용료 최대 20% 할인\n주요 자료 제공: 채용 성과를 높이는 가이드 무료 제공\n경품 이벤트: 가입 고객 대상 경품 추첨 이벤트(노트북, 스마트워치 등)\n지금 바로 가입하시고, 인사 관리의 모든 과정을 효율적으로 자동화해 보세요!\n[CTA 버튼]\n지금 가입하고 혜택 받기 [링크 삽입]\n[푸터]\n[회사 로고 및 주소]\n문의사항이 있으시면 언제든지 연락 주십시오.\n[소셜 미디어 링크 및 구독 해지 옵션]",
+            promotion_edm: "**프로모션 EDM 기본 텍스트**",
+            landing_page: "**랜딩 페이지 기본 텍스트**"
+        };
+
+        window.onload = function() {
+            const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+            document.getElementById('inputText-' + activeTab).value = defaultTexts[activeTab];
+        };
 
         // 서버로 데이터 전송
         function submitForm() {
@@ -140,8 +164,13 @@
             .then(data => {
                 document.getElementById('loadingMessage').style.display = 'none';
                 const resultElement = document.getElementById('result');
+                
                 if (data.message) {
-                    resultElement.textContent = data.message;
+                    // 결과값을 div로 출력하고 수정된 부분 강조
+                    resultElement.innerHTML = `
+                        <h2>결과</h2>
+                        <div>${highlightChanges(inputText, data.message)}</div>
+                    `;
                 } else {
                     resultElement.textContent = "오류가 발생했습니다.";
                 }
@@ -150,6 +179,23 @@
                 console.error("에러 발생:", error);
                 document.getElementById('result').textContent = "서버와의 통신에 실패했습니다.";
             });
+        }
+
+        // 수정된 부분 강조 함수
+        function highlightChanges(originalText, resultText) {
+            // 문장 단위로 텍스트를 분리
+            let originalSentences = originalText.split(/([.!?]\s)/); // 문장과 구분 기호 포함 분리
+            let resultSentences = resultText.split(/([.!?]\s)/);
+
+            let highlightedText = resultSentences.map((sentence, index) => {
+                // 문장 단위로 비교하고, 공백이나 특수문자 차이는 무시
+                if (originalSentences[index]?.trim() !== sentence.trim()) {
+                    return `<span class="highlight">${sentence}</span>`;
+                }
+                return sentence;
+            }).join('');
+
+            return highlightedText;
         }
     </script>
 </body>
