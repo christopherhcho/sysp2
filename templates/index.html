@@ -15,60 +15,100 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1800px;
             width: 100%;
             background-color: white;
-            padding: 30px;
+            /* 컨테이너의 패딩을 제거하고 내부 컨테이너에서 여백을 조정 */
+            padding: 0;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-align: center;
             box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+        }
+
+        .form-container, .preview-container {
+            width: 50%;
+            /* 좌우 여백을 동일하게 설정 */
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .preview-container {
+            border-left: 1px solid #e5e7eb;
         }
 
         h1 {
             font-size: 1.5em;
             font-weight: bold;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             text-align: center;
         }
 
-        label {
+        .form-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
             font-size: 1em;
             color: #555;
-            display: block;
-            text-align: center;
-            margin-bottom: 10px;
+            width: 20%;
+            min-width: 100px;
+            margin-right: 10px;
+            font-weight: bold;
+            text-align: left;
+            margin-top: 5px;
         }
 
-        textarea {
+        .form-group .input-wrapper {
+            width: 80%;
+            position: relative;
+        }
+
+        input, textarea {
             width: 100%;
-            height: 250px;
-            padding: 10px;
+            padding: 12px;
             font-size: 1em;
             border-radius: 6px;
             border: 1px solid #e5e7eb;
-            margin-bottom: 20px;
-            resize: none;
             box-sizing: border-box;
             color: #333;
             transition: border-color 0.3s;
         }
 
-        textarea:focus {
+        input:focus, textarea:focus {
             border-color: #6366F1;
+            outline: none;
         }
 
-        textarea::placeholder {
-            color: #666;
-            opacity: 0.8;
+        textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
-        button {
+        .add-button {
+            background-color: transparent;
+            color: #6366F1;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 0;
+            text-align: left;
+        }
+
+        .add-button:hover {
+            text-decoration: underline;
+        }
+
+        button.submit-button {
             background-color: #6366F1;
             color: white;
             padding: 14px 0;
@@ -77,21 +117,13 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            margin-bottom: 20px;
             box-sizing: border-box;
             font-weight: bold;
             position: relative;
+            margin-top: auto;
         }
 
-        button:disabled {
-            background-color: #6366F1; /* 원래 버튼 색상으로 유지 */
-            cursor: not-allowed;
-            opacity: 0.8; /* 버튼을 약간 흐리게 표시 */
-            /* 필요하다면 텍스트 색상을 변경할 수 있습니다 */
-            /* color: rgba(255, 255, 255, 0.7); */
-        }
-
-        button:hover:enabled {
+        button.submit-button:hover {
             background-color: #4F46E5;
         }
 
@@ -119,115 +151,270 @@
             }
         }
 
-        .result {
-            margin-top: 20px;
-            max-height: 600px;
+        .hidden {
+            display: none;
+        }
+
+        /* 추가된 홍보 문구 스타일 */
+        .additional-input {
+            margin-bottom: 10px;
+        }
+
+        .remove-button {
+            background-color: transparent;
+            color: #e11d48;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            padding: 0;
+            text-align: right;
+            display: block;
+            width: 100%;
+        }
+
+        .remove-button:hover {
+            text-decoration: underline;
+        }
+
+        /* 미리보기 스타일 */
+        .preview-container h2 {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .preview-content {
+            width: 100%;
+            height: calc(100% - 60px);
             overflow-y: auto;
-            padding: 10px;
+            padding: 20px;
             background-color: #f9fafb;
             border-radius: 6px;
             border: 1px solid #e5e7eb;
-            text-align: left;
             box-sizing: border-box;
         }
 
-        p {
-            font-size: 1.1em;
-            color: #666;
-            white-space: pre-wrap;
+        .preview-item {
+            margin-bottom: 15px;
         }
 
-        .hidden {
-            display: none;
+        .preview-item h3 {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .preview-item p {
+            font-size: 1em;
+            color: #666;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>디자인 요청을 위한 기획서 초안 생성 페이지</h1>
-        <label for="inputText">초안을 생성할 행사 내용을 넣어주세요</label>
-        <textarea id="inputText" placeholder="행사 이름: HRevolution 23
-주제: 국내 최대 규모 HR-TECH 컨퍼런스
-일시: 2023년 9월 20일(수) 오후 1시
-장소: 양재 더케이 호텔, 2F 그랜드 볼룸
-주요 강연자:
-고동진 전 삼성전자 대표이사
-채병권 북아시아 HR 총괄 (kenvue, 존슨앤존슨 컨수머)
-주요 프로그램:
-HR에 적용된 최신 IT 기술과 아이디어 소개
-전시존에서 70여 개의 자동화 툴 체험
-특별 이벤트 및 경품 (갤럭시 신제품 경품)"></textarea>
-        <button id="submitButton" onclick="submitForm()">
-            <span id="buttonText">초안 생성하기</span>
-            <div id="spinner" class="spinner"></div>
-        </button>
-        <div id="resultContainer" class="result hidden">
-            <p id="chatgptResult"></p>
+        <!-- 왼쪽 폼 영역 -->
+        <div class="form-container">
+            <h1>디자인 요청을 위한 기획서 초안 생성 페이지</h1>
+            <div class="form-content">
+                <form id="questionForm">
+                    <!-- 행사명 -->
+                    <div class="form-group">
+                        <label for="eventName">행사명</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="eventName" name="eventName" placeholder="예: HRevolution 23" required oninput="updatePreview()">
+                            <div id="eventName-additional"></div>
+                            <button type="button" class="add-button" onclick="addAdditionalInput('eventName')">+ 문구 추가</button>
+                        </div>
+                    </div>
+
+                    <!-- 주제 -->
+                    <div class="form-group">
+                        <label for="eventTheme">주제</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="eventTheme" name="eventTheme" placeholder="예: 국내 최대 규모 HR-TECH 컨퍼런스" required oninput="updatePreview()">
+                            <div id="eventTheme-additional"></div>
+                            <button type="button" class="add-button" onclick="addAdditionalInput('eventTheme')">+ 문구 추가</button>
+                        </div>
+                    </div>
+
+                    <!-- 일시 -->
+                    <div class="form-group">
+                        <label for="eventDate">일시</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="eventDate" name="eventDate" placeholder="예: 2023년 9월 20일(수) 오후 1시" required oninput="updatePreview()">
+                            <div id="eventDate-additional"></div>
+                            <button type="button" class="add-button" onclick="addAdditionalInput('eventDate')">+ 문구 추가</button>
+                        </div>
+                    </div>
+
+                    <!-- 장소 -->
+                    <div class="form-group">
+                        <label for="eventLocation">장소</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="eventLocation" name="eventLocation" placeholder="예: 양재 더케이 호텔, 2F 그랜드 볼룸" required oninput="updatePreview()">
+                            <div id="eventLocation-additional"></div>
+                            <button type="button" class="add-button" onclick="addAdditionalInput('eventLocation')">+ 문구 추가</button>
+                        </div>
+                    </div>
+
+                    <!-- 주요 강연자 -->
+                    <div class="form-group">
+                        <label for="speakers">주요 강연자</label>
+                        <div class="input-wrapper">
+                            <textarea id="speakers" name="speakers" placeholder="예: 고동진 전 삼성전자 대표이사&#10;채병권 북아시아 HR 총괄 (kenvue, 존슨앤존슨 컨수머)" required oninput="updatePreview()"></textarea>
+                            <div id="speakers-additional"></div>
+                            <button type="button" class="add-button" onclick="addAdditionalInput('speakers')">+ 문구 추가</button>
+                        </div>
+                    </div>
+
+                    <!-- 주요 프로그램 -->
+                    <div class="form-group">
+                        <label for="programs">주요 프로그램</label>
+                        <div class="input-wrapper">
+                            <textarea id="programs" name="programs" placeholder="예: HR에 적용된 최신 IT 기술과 아이디어 소개&#10;전시존에서 70여 개의 자동화 툴 체험&#10;특별 이벤트 및 경품 (갤럭시 신제품 경품)" required oninput="updatePreview()"></textarea>
+                            <div id="programs-additional"></div>
+                            <button type="button" class="add-button" onclick="addAdditionalInput('programs')">+ 문구 추가</button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="submit-button" id="submitButton" onclick="submitForm()">
+                        <span id="buttonText">초안 생성하기</span>
+                        <div id="spinner" class="spinner"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 오른쪽 미리보기 영역 -->
+        <div class="preview-container">
+            <h2>미리보기</h2>
+            <div id="previewContent" class="preview-content">
+                <!-- 입력한 내용이 실시간으로 업데이트됩니다 -->
+            </div>
         </div>
     </div>
 
     <script>
-        const textarea = document.getElementById('inputText');
+        // 추가 입력 필드 관리 객체
+        const additionalInputs = {
+            eventName: [],
+            eventTheme: [],
+            eventDate: [],
+            eventLocation: [],
+            speakers: [],
+            programs: []
+        };
 
-        textarea.addEventListener('focus', () => {
-            textarea.placeholder = '';
-        });
+        function addAdditionalInput(fieldName) {
+            const container = document.getElementById(`${fieldName}-additional`);
+            const index = additionalInputs[fieldName].length;
+            const inputId = `${fieldName}-additional-${index}`;
 
-        textarea.addEventListener('blur', () => {
-            if (!textarea.value.trim()) {
-                textarea.placeholder = `행사 이름: HRevolution 23
-주제: 국내 최대 규모 HR-TECH 컨퍼런스
-일시: 2023년 9월 20일(수) 오후 1시
-장소: 양재 더케이 호텔, 2F 그랜드 볼룸
-주요 강연자:
-고동진 전 삼성전자 대표이사
-채병권 북아시아 HR 총괄 (kenvue, 존슨앤존슨 컨수머)
-주요 프로그램:
-HR에 적용된 최신 IT 기술과 아이디어 소개
-전시존에서 70여 개의 자동화 툴 체험
-특별 이벤트 및 경품 (갤럭시 신제품 경품)`;
+            // 입력 필드 생성
+            let inputElement;
+            if (fieldName === 'speakers' || fieldName === 'programs') {
+                inputElement = document.createElement('textarea');
+                inputElement.rows = 3;
+            } else {
+                inputElement = document.createElement('input');
+                inputElement.type = 'text';
             }
-        });
+            inputElement.id = inputId;
+            inputElement.name = `${fieldName}-additional`;
+            inputElement.classList.add('additional-input');
+            inputElement.placeholder = '추가 문구를 입력하세요';
+            inputElement.oninput = updatePreview;
 
-        function submitForm() {
-            const inputText = document.getElementById("inputText").value;
-            const resultContainer = document.getElementById("resultContainer");
-            const resultElement = document.getElementById("chatgptResult");
-            const submitButton = document.getElementById("submitButton");
-            const spinner = document.getElementById("spinner");
-            const buttonText = document.getElementById('buttonText');
+            // 제거 버튼 생성
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.classList.add('remove-button');
+            removeButton.textContent = '삭제하기';
+            removeButton.onclick = () => {
+                container.removeChild(wrapper);
+                // 배열에서 해당 입력 필드 제거
+                additionalInputs[fieldName] = additionalInputs[fieldName].filter(id => id !== inputId);
+                updatePreview();
+            };
 
-            // 중복 클릭 방지 및 스피너 표시
-            submitButton.disabled = true;
-            spinner.classList.add('active');
-            buttonText.style.visibility = 'hidden';
+            // 래퍼 생성
+            const wrapper = document.createElement('div');
+            wrapper.appendChild(inputElement);
+            wrapper.appendChild(removeButton);
 
-            fetch('/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ inputText: inputText })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    resultElement.textContent = data.message;
-                    resultContainer.classList.remove('hidden');
-                } else {
-                    resultContainer.classList.add('hidden');
+            container.appendChild(wrapper);
+
+            // 추가 입력 필드 ID 저장
+            additionalInputs[fieldName].push(inputId);
+            updatePreview();
+        }
+
+        function getAdditionalValues(fieldName) {
+            return additionalInputs[fieldName].map(id => document.getElementById(id).value.trim()).filter(value => value !== '');
+        }
+
+        function updatePreview() {
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = '';
+
+            const fields = ['eventName', 'eventTheme', 'eventDate', 'eventLocation', 'speakers', 'programs'];
+            fields.forEach(field => {
+                const mainValue = document.getElementById(field).value.trim();
+                const additionalValues = getAdditionalValues(field);
+
+                if (mainValue || additionalValues.length > 0) {
+                    const previewItem = document.createElement('div');
+                    previewItem.classList.add('preview-item');
+
+                    const title = document.createElement('h3');
+                    title.textContent = getFieldLabel(field);
+                    previewItem.appendChild(title);
+
+                    if (mainValue) {
+                        const content = document.createElement('p');
+                        content.textContent = mainValue;
+                        previewItem.appendChild(content);
+                    }
+
+                    additionalValues.forEach((value) => {
+                        const additionalContent = document.createElement('p');
+                        additionalContent.textContent = value;
+                        previewItem.appendChild(additionalContent);
+                    });
+
+                    previewContent.appendChild(previewItem);
                 }
-            })
-            .catch(error => {
-                resultElement.textContent = "서버와의 통신에 실패했습니다.";
-                resultContainer.classList.remove('hidden');
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                spinner.classList.remove('active');
-                buttonText.style.visibility = 'visible';
             });
         }
+
+        function getFieldLabel(fieldName) {
+            switch(fieldName) {
+                case 'eventName': return '행사명';
+                case 'eventTheme': return '주제';
+                case 'eventDate': return '일시';
+                case 'eventLocation': return '장소';
+                case 'speakers': return '주요 강연자';
+                case 'programs': return '주요 프로그램';
+                default: return '';
+            }
+        }
+
+        function submitForm() {
+            // 폼 제출 시 필요한 로직을 여기에 추가합니다.
+            alert('폼이 제출되었습니다.');
+        }
+
+        // 초기 미리보기 업데이트
+        updatePreview();
+
+        // 각 입력 필드에 대한 이벤트 리스너 추가
+        document.querySelectorAll('input, textarea').forEach(element => {
+            element.addEventListener('input', updatePreview);
+        });
     </script>
 </body>
 </html>
