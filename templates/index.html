@@ -2,11 +2,12 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>디자인 요청을 위한 기획서 초안 생성 페이지</title>
+    <!-- 휴지통 아이콘을 위한 SVG 코드 포함 -->
     <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css');
-        
+        /* Pretendard 폰트 임포트 */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: #f9fafb;
@@ -22,23 +23,29 @@
             max-width: 1800px;
             width: 100%;
             background-color: white;
-            /* 컨테이너의 패딩을 제거하고 내부 컨테이너에서 여백을 조정 */
             padding: 0;
             border-radius: 12px;
             box-sizing: border-box;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
+            position: relative;
+            overflow: hidden;
         }
 
         .form-container, .preview-container {
             width: 50%;
-            /* 좌우 여백을 동일하게 설정 */
             padding: 30px;
             box-sizing: border-box;
         }
 
-        .preview-container {
-            border-left: 1px solid #e5e7eb;
+        /* 기준선 스타일 수정 */
+        .divider {
+            position: absolute;
+            top: 30px; /* 위쪽 여백 */
+            bottom: 30px; /* 아래쪽 여백 */
+            left: 50%;
+            width: 1px;
+            background-color: #e5e7eb;
         }
 
         h1 {
@@ -50,28 +57,24 @@
         }
 
         .form-group {
-            display: flex;
-            align-items: flex-start;
             margin-bottom: 25px;
         }
 
         .form-group label {
             font-size: 1em;
             color: #555;
-            width: 20%;
-            min-width: 100px;
-            margin-right: 10px;
             font-weight: bold;
             text-align: left;
-            margin-top: 5px;
+            margin-bottom: 5px;
+            display: block;
         }
 
         .form-group .input-wrapper {
-            width: 80%;
             position: relative;
+            width: 100%;
         }
 
-        input, textarea {
+        input {
             width: 100%;
             padding: 12px;
             font-size: 1em;
@@ -82,14 +85,42 @@
             transition: border-color 0.3s;
         }
 
-        input:focus, textarea:focus {
+        input:focus {
             border-color: #6366F1;
             outline: none;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
+        /* 추가 입력 필드에만 삭제 아이콘 적용 */
+        .additional-input-wrapper {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .additional-input-wrapper input {
+            padding-right: 40px; /* 삭제 아이콘 공간 확보 */
+        }
+
+        /* 삭제 아이콘 스타일 */
+        .delete-icon {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+
+        .delete-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #121619;
+        }
+
+        .delete-icon:hover svg {
+            fill: #e11d48; /* 호버 시 아이콘 색상 변경 */
         }
 
         .add-button {
@@ -132,8 +163,8 @@
             width: 20px;
             height: 20px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
             border-top-color: white;
+            border-radius: 50%;
             animation: spin 1s ease-in-out infinite;
             position: absolute;
             top: 50%;
@@ -153,27 +184,6 @@
 
         .hidden {
             display: none;
-        }
-
-        /* 추가된 홍보 문구 스타일 */
-        .additional-input {
-            margin-bottom: 10px;
-        }
-
-        .remove-button {
-            background-color: transparent;
-            color: #e11d48;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9em;
-            padding: 0;
-            text-align: right;
-            display: block;
-            width: 100%;
-        }
-
-        .remove-button:hover {
-            text-decoration: underline;
         }
 
         /* 미리보기 스타일 */
@@ -200,35 +210,40 @@
             margin-bottom: 15px;
         }
 
-        .preview-item h3 {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 5px;
-        }
-
         .preview-item p {
             font-size: 1em;
             color: #666;
             white-space: pre-wrap;
+            margin: 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 기준선 -->
+        <div class="divider"></div>
+
         <!-- 왼쪽 폼 영역 -->
         <div class="form-container">
             <h1>디자인 요청을 위한 기획서 초안 생성 페이지</h1>
             <div class="form-content">
                 <form id="questionForm">
+                    <!-- 인트로 문구 -->
+                    <div class="form-group">
+                        <label for="introText">인트로 문구</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="introText" name="introText" placeholder="예: 여러분을 HRevolution 24에 초대합니다!" oninput="updatePreview()">
+                        </div>
+                    </div>
+
                     <!-- 행사명 -->
                     <div class="form-group">
                         <label for="eventName">행사명</label>
                         <div class="input-wrapper">
-                            <input type="text" id="eventName" name="eventName" placeholder="예: HRevolution 23" required oninput="updatePreview()">
-                            <div id="eventName-additional"></div>
-                            <button type="button" class="add-button" onclick="addAdditionalInput('eventName')">+ 문구 추가</button>
+                            <input type="text" id="eventName" name="eventName" placeholder="예: HRevolution 24" required oninput="updatePreview()">
                         </div>
+                        <div id="eventName-additional"></div>
+                        <button type="button" class="add-button" onclick="addAdditionalInput('eventName')">+ 문구 추가</button>
                     </div>
 
                     <!-- 주제 -->
@@ -236,9 +251,9 @@
                         <label for="eventTheme">주제</label>
                         <div class="input-wrapper">
                             <input type="text" id="eventTheme" name="eventTheme" placeholder="예: 국내 최대 규모 HR-TECH 컨퍼런스" required oninput="updatePreview()">
-                            <div id="eventTheme-additional"></div>
-                            <button type="button" class="add-button" onclick="addAdditionalInput('eventTheme')">+ 문구 추가</button>
                         </div>
+                        <div id="eventTheme-additional"></div>
+                        <button type="button" class="add-button" onclick="addAdditionalInput('eventTheme')">+ 문구 추가</button>
                     </div>
 
                     <!-- 일시 -->
@@ -246,9 +261,9 @@
                         <label for="eventDate">일시</label>
                         <div class="input-wrapper">
                             <input type="text" id="eventDate" name="eventDate" placeholder="예: 2023년 9월 20일(수) 오후 1시" required oninput="updatePreview()">
-                            <div id="eventDate-additional"></div>
-                            <button type="button" class="add-button" onclick="addAdditionalInput('eventDate')">+ 문구 추가</button>
                         </div>
+                        <div id="eventDate-additional"></div>
+                        <button type="button" class="add-button" onclick="addAdditionalInput('eventDate')">+ 문구 추가</button>
                     </div>
 
                     <!-- 장소 -->
@@ -256,28 +271,36 @@
                         <label for="eventLocation">장소</label>
                         <div class="input-wrapper">
                             <input type="text" id="eventLocation" name="eventLocation" placeholder="예: 양재 더케이 호텔, 2F 그랜드 볼룸" required oninput="updatePreview()">
-                            <div id="eventLocation-additional"></div>
-                            <button type="button" class="add-button" onclick="addAdditionalInput('eventLocation')">+ 문구 추가</button>
                         </div>
+                        <div id="eventLocation-additional"></div>
+                        <button type="button" class="add-button" onclick="addAdditionalInput('eventLocation')">+ 문구 추가</button>
                     </div>
 
                     <!-- 주요 강연자 -->
                     <div class="form-group">
                         <label for="speakers">주요 강연자</label>
                         <div class="input-wrapper">
-                            <textarea id="speakers" name="speakers" placeholder="예: 고동진 전 삼성전자 대표이사&#10;채병권 북아시아 HR 총괄 (kenvue, 존슨앤존슨 컨수머)" required oninput="updatePreview()"></textarea>
-                            <div id="speakers-additional"></div>
-                            <button type="button" class="add-button" onclick="addAdditionalInput('speakers')">+ 문구 추가</button>
+                            <input type="text" id="speakers" name="speakers" placeholder="예: 고동진 전 삼성전자 대표이사" required oninput="updatePreview()">
                         </div>
+                        <div id="speakers-additional"></div>
+                        <button type="button" class="add-button" onclick="addAdditionalInput('speakers')">+ 문구 추가</button>
                     </div>
 
                     <!-- 주요 프로그램 -->
                     <div class="form-group">
                         <label for="programs">주요 프로그램</label>
                         <div class="input-wrapper">
-                            <textarea id="programs" name="programs" placeholder="예: HR에 적용된 최신 IT 기술과 아이디어 소개&#10;전시존에서 70여 개의 자동화 툴 체험&#10;특별 이벤트 및 경품 (갤럭시 신제품 경품)" required oninput="updatePreview()"></textarea>
-                            <div id="programs-additional"></div>
-                            <button type="button" class="add-button" onclick="addAdditionalInput('programs')">+ 문구 추가</button>
+                            <input type="text" id="programs" name="programs" placeholder="예: HR에 적용된 최신 IT 기술과 아이디어 소개" required oninput="updatePreview()">
+                        </div>
+                        <div id="programs-additional"></div>
+                        <button type="button" class="add-button" onclick="addAdditionalInput('programs')">+ 문구 추가</button>
+                    </div>
+
+                    <!-- 클로징 문구 -->
+                    <div class="form-group">
+                        <label for="closingText">클로징 문구</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="closingText" name="closingText" placeholder="예: 많은 관심과 참여 부탁드립니다." oninput="updatePreview()">
                         </div>
                     </div>
 
@@ -315,36 +338,37 @@
             const inputId = `${fieldName}-additional-${index}`;
 
             // 입력 필드 생성
-            let inputElement;
-            if (fieldName === 'speakers' || fieldName === 'programs') {
-                inputElement = document.createElement('textarea');
-                inputElement.rows = 3;
-            } else {
-                inputElement = document.createElement('input');
-                inputElement.type = 'text';
-            }
+            const inputElement = document.createElement('input');
+            inputElement.type = 'text';
             inputElement.id = inputId;
             inputElement.name = `${fieldName}-additional`;
-            inputElement.classList.add('additional-input');
             inputElement.placeholder = '추가 문구를 입력하세요';
             inputElement.oninput = updatePreview;
 
-            // 제거 버튼 생성
-            const removeButton = document.createElement('button');
-            removeButton.type = 'button';
-            removeButton.classList.add('remove-button');
-            removeButton.textContent = '삭제하기';
-            removeButton.onclick = () => {
+            // 삭제 아이콘 생성
+            const deleteIcon = document.createElement('button');
+            deleteIcon.type = 'button';
+            deleteIcon.classList.add('delete-icon');
+            deleteIcon.innerHTML = `
+                <!-- 휴지통 아이콘 SVG 코드 -->
+                <svg width="24" height="24" fill="#121619" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                    <path d="M19.9 30.6v-8h2.2v8h-2.2Z"></path>
+                    <path d="M25.9 30.6v-8h2.2v8h-2.2Z"></path>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M18.6 15v-2.7c0-1.3.99-2.3 2.3-2.3h6.3c1.3 0 2.3 1 2.3 2.3V15H37v2.2h-1.9v16.3c0 2.6-2.1 4.7-4.7 4.7H17.6c-2.6 0-4.7-2.1-4.7-4.7V17.2H11V15h7.6Zm2.2-2.7V15h6.5v-2.7c0-.042-.005-.075-.011-.076l-.004-.009-.009-.004a.21.21 0 0 0-.076-.011h-6.3a.21.21 0 0 0-.085.015l-.004.009a.21.21 0 0 0-.011.076Zm-5.7 4.9v16.3c0 1.4 1.1 2.5 2.5 2.5h12.8c1.4 0 2.5-1.1 2.5-2.5V17.2H15.1Z"></path>
+                </svg>
+            `;
+            deleteIcon.onclick = () => {
                 container.removeChild(wrapper);
                 // 배열에서 해당 입력 필드 제거
                 additionalInputs[fieldName] = additionalInputs[fieldName].filter(id => id !== inputId);
                 updatePreview();
             };
 
-            // 래퍼 생성
+            // 입력 필드 래퍼 생성
             const wrapper = document.createElement('div');
+            wrapper.classList.add('additional-input-wrapper');
             wrapper.appendChild(inputElement);
-            wrapper.appendChild(removeButton);
+            wrapper.appendChild(deleteIcon);
 
             container.appendChild(wrapper);
 
@@ -354,53 +378,50 @@
         }
 
         function getAdditionalValues(fieldName) {
-            return additionalInputs[fieldName].map(id => document.getElementById(id).value.trim()).filter(value => value !== '');
+            return additionalInputs[fieldName]
+                .map(id => document.getElementById(id).value.trim())
+                .filter(value => value !== '');
         }
 
         function updatePreview() {
             const previewContent = document.getElementById('previewContent');
             previewContent.innerHTML = '';
 
-            const fields = ['eventName', 'eventTheme', 'eventDate', 'eventLocation', 'speakers', 'programs'];
+            // 필드 순서 정의
+            const fields = [
+                'introText',
+                'eventName',
+                'eventTheme',
+                'eventDate',
+                'eventLocation',
+                'speakers',
+                'programs',
+                'closingText'
+            ];
+
             fields.forEach(field => {
-                const mainValue = document.getElementById(field).value.trim();
-                const additionalValues = getAdditionalValues(field);
+                let values = [];
 
-                if (mainValue || additionalValues.length > 0) {
-                    const previewItem = document.createElement('div');
-                    previewItem.classList.add('preview-item');
-
-                    const title = document.createElement('h3');
-                    title.textContent = getFieldLabel(field);
-                    previewItem.appendChild(title);
-
-                    if (mainValue) {
-                        const content = document.createElement('p');
-                        content.textContent = mainValue;
-                        previewItem.appendChild(content);
+                if (field === 'introText' || field === 'closingText') {
+                    const value = document.getElementById(field).value.trim();
+                    if (value) {
+                        values.push(value);
                     }
-
-                    additionalValues.forEach((value) => {
-                        const additionalContent = document.createElement('p');
-                        additionalContent.textContent = value;
-                        previewItem.appendChild(additionalContent);
-                    });
-
-                    previewContent.appendChild(previewItem);
+                } else {
+                    const mainValue = document.getElementById(field).value.trim();
+                    const additionalValues = getAdditionalValues(field);
+                    if (mainValue) {
+                        values.push(mainValue);
+                    }
+                    values = values.concat(additionalValues);
                 }
-            });
-        }
 
-        function getFieldLabel(fieldName) {
-            switch(fieldName) {
-                case 'eventName': return '행사명';
-                case 'eventTheme': return '주제';
-                case 'eventDate': return '일시';
-                case 'eventLocation': return '장소';
-                case 'speakers': return '주요 강연자';
-                case 'programs': return '주요 프로그램';
-                default: return '';
-            }
+                values.forEach(value => {
+                    const paragraph = document.createElement('p');
+                    paragraph.textContent = value;
+                    previewContent.appendChild(paragraph);
+                });
+            });
         }
 
         function submitForm() {
@@ -412,7 +433,7 @@
         updatePreview();
 
         // 각 입력 필드에 대한 이벤트 리스너 추가
-        document.querySelectorAll('input, textarea').forEach(element => {
+        document.querySelectorAll('input').forEach(element => {
             element.addEventListener('input', updatePreview);
         });
     </script>
